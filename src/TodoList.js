@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TodoListContract from '../build/contracts/TodoList.json';
 import web3, {
-  selectContractInstance, mapReponseToJSON
+  selectContractInstance, mapReponseToJSON, listenForNewBlocks
 } from './web3';
 import styled, { injectGlobal } from 'styled-components';
 
@@ -70,17 +70,21 @@ class TodoList extends Component {
 
   async componentWillMount() {
     this.todoList = await selectContractInstance(TodoListContract);
-
-    const todoItems = await this.getTodoItems();
-    this.setState({ todoItems });
+    this.removeListener = listenForNewBlocks(async ()=>{
+      this.setState({ todoItems: await this.getTodoItems() });
+    });
+  }
+  componentWillUnmount() {
+    this.removeListener();
   }
 
   async handleSubmit({ key }) {
     if (key !== 'Enter') return;
+    console.log(web3.eth.getBalance(this.state.account) + 0);
 
     this.setState({ pending: true });
     const todoList = await selectContractInstance(TodoListContract);
-    await todoList.addTodoItem(this.state.newItem, { from: this.state.account});
+    await todoList.addTodoItem(this.state.newItem, { from: this.state.account });
 
     const todoItems = await this.getTodoItems();
 

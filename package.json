@@ -15,7 +15,7 @@
     "cross-spawn": "4.0.2",
     "css-loader": "0.26.0",
     "detect-port": "1.0.1",
-    "dotenv": "2.0.0",
+    "dotenv": "^2.0.0",
     "eslint": "3.8.1",
     "eslint-config-react-app": "^0.5.0",
     "eslint-loader": "1.6.0",
@@ -23,6 +23,7 @@
     "eslint-plugin-import": "2.0.1",
     "eslint-plugin-jsx-a11y": "2.2.3",
     "eslint-plugin-react": "6.4.1",
+    "ethereumjs-testrpc": "^4.0.1",
     "extract-text-webpack-plugin": "1.0.1",
     "file-loader": "0.9.0",
     "filesize": "3.3.0",
@@ -45,6 +46,7 @@
     "run-sequence": "^1.2.2",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
+    "truffle": "^3.4.6",
     "truffle-contract": "^1.1.8",
     "truffle-solidity-loader": "0.0.8",
     "url-loader": "0.5.7",
@@ -54,7 +56,6 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
-    "dotenv": "^2.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "styled-components": "^1.4.4"
@@ -63,6 +64,14 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
+    "start-dev": "npm-run-all start-dev:setup start-dev:serve",
+    "start-dev:setup": "npm-run-all --parallel start-dev:setup:*",
+    "start-dev:setup:testrpc": "rimraf ./build/testrpc && mkdirp ./build/testrpc",
+    "start-dev:setup:contracts": "truffle compile",
+    "start-dev:serve": "npm-run-all --parallel start-dev:serve:*",
+    "start-dev:serve:testrpc": "testrpc --db=./build/testrpc --gasPrice=1",
+    "start-dev:serve:contract": "sleep 2 && truffle migrate --reset",
+    "start-dev:serve:react": "sleep 3 && npm run start",
     "watch-contracts": "gulp watch-contracts",
     "geth": "gulp geth"
   },
